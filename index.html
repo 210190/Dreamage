@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文字視覺小說</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       background-color: #121212;
       color: #e0e0e0;
@@ -33,7 +31,7 @@
       color: #3b82f6;
       font-weight: bold;
       margin-bottom: 8px;
-      min-height: 1.2em; /* 防止切換說話者時畫面閃爍跳動 */
+      min-height: 1.2em;
     }
     #text-box {
       font-size: 1.05rem;
@@ -73,85 +71,69 @@
 
 <script>
   let storyData = {};
+  let currentSceneId = '';
   let currentDialogues = [];
   let dialogueIndex = 0;
   let currentOptions = [];
+  let onDialogueComplete = null;
 
-  // 使用 fetch 動態讀取 story.json
   fetch('story.json')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('網絡回應不正常');
-      }
-      return response.json();
-    })
+    .then(res => res.json())
     .then(data => {
       storyData = data;
-      // 優先讀取 gap，若無則讀取 start
       const startScene = storyData['gap'] ? 'gap' : 'start';
       renderScene(startScene);
     })
-    .catch(error => {
-      console.error('載入劇本失敗:', error);
-      document.getElementById('text-box').innerText = '劇本載入失敗，請確認 story.json 檔案格式與語法是否正確。';
+    .catch(err => {
+      document.getElementById('text-box').innerText = '劇本載入失敗，請檢查 story.json 格式。';
     });
 
   function renderScene(sceneId) {
+    currentSceneId = sceneId;
     const scene = storyData[sceneId];
-    if (!scene) {
-      console.error(`找不到目標場景 ID: ${sceneId}`);
-      return;
-    }
+    if (!scene) return;
 
-    // 相容性處理：如果舊場景只寫了 text，自動轉成單句的 dialogues 陣列
     if (scene.text && !scene.dialogues) {
       currentDialogues = [{ speaker: scene.speaker || '', text: scene.text }];
     } else {
       currentDialogues = scene.dialogues || [];
     }
 
-    dialogueIndex = 0;
     currentOptions = scene.options || [];
-
+    onDialogueComplete = renderOptions;
+    
+    dialogueIndex = 0;
     showNextDialogue();
   }
 
   function showNextDialogue() {
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '';
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
 
-    // 如果對話陣列裡面還有未讀取的句子
     if (dialogueIndex < currentDialogues.length) {
       const current = currentDialogues[dialogueIndex];
-      
-      // 更新說話者名稱與文字內文
       document.getElementById('speaker-name').innerText = current.speaker ? `【 ${current.speaker} 】` : '';
       document.getElementById('text-box').innerText = current.text;
-
       dialogueIndex++;
 
-      // 建立「點擊繼續」按鈕
-      const nextBtn = document.createElement('button');
-      nextBtn.className = 'option-btn';
-      
-      // 如果這句是最後一句對話，且後面有選擇肢，按鈕提示玩家進選擇
-      if (dialogueIndex === currentDialogues.length && currentOptions.length > 0) {
-        nextBtn.innerText = '▼ （點擊進行選擇）';
-      } else {
+      // 如果後面還有對話，顯示「繼續」按鈕；如果已經是最後一句，直接繪製選項！
+      if (dialogueIndex < currentDialogues.length) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'option-btn';
         nextBtn.innerText = '▼ 繼續';
+        nextBtn.onclick = showNextDialogue;
+        container.appendChild(nextBtn);
+      } else {
+        if (onDialogueComplete) onDialogueComplete();
       }
-      
-      nextBtn.onclick = showNextDialogue;
-      optionsContainer.appendChild(nextBtn);
     } else {
-      // 所有對話閱讀完畢，渲染該場景的分歧選項
-      renderOptions();
+      if (onDialogueComplete) onDialogueComplete();
     }
   }
 
   function renderOptions() {
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '';
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
 
     if (currentOptions.length === 0) {
       document.getElementById('text-box').innerText += '\n\n【 劇本結束 】';
@@ -159,12 +141,29 @@
     }
 
     currentOptions.forEach(opt => {
-      const button = document.createElement('button');
-      button.className = 'option-btn';
-      button.innerText = opt.text;
-      button.onclick = () => renderScene(opt.target);
-      optionsContainer.appendChild(button);
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerText = opt.text;
+      btn.onclick = () => handleOptionClick(opt);
+      container.appendChild(btn);
     });
+  }
+
+  function handleOptionClick(option) {
+    if (option.reply && option.reply.length > 0) {
+      currentDialogues = option.reply;
+      dialogueIndex = 0;
+      onDialogueComplete = () => {
+        if (option.target && option.target !== currentSceneId) {
+          renderScene(option.target);
+        } else {
+          renderOptions();
+        }
+      };
+      showNextDialogue();
+    } else if (option.target) {
+      renderScene(option.target);
+    }
   }
 </script>
 
