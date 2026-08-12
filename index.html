@@ -33,6 +33,7 @@
       color: #3b82f6;
       font-weight: bold;
       margin-bottom: 8px;
+      min-height: 1.2em; /* 防止切換說話者時畫面閃爍跳動 */
     }
     #text-box {
       font-size: 1.05rem;
@@ -72,8 +73,11 @@
 
 <script>
   let storyData = {};
+  let currentDialogues = [];
+  let dialogueIndex = 0;
+  let currentOptions = [];
 
-  // 使用 fetch 動態讀取同目錄下的 story.json 檔案
+  // 使用 fetch 動態讀取 story.json
   fetch('story.json')
     .then(response => {
       if (!response.ok) {
@@ -83,26 +87,78 @@
     })
     .then(data => {
       storyData = data;
-      renderScene('gap'); // 讀取成功後進入開頭場景
+      // 優先讀取 gap，若無則讀取 start
+      const startScene = storyData['gap'] ? 'gap' : 'start';
+      renderScene(startScene);
     })
     .catch(error => {
       console.error('載入劇本失敗:', error);
-      document.getElementById('text-box').innerText = '劇本載入失敗，請確認 story.json 檔案格式是否正確。';
+      document.getElementById('text-box').innerText = '劇本載入失敗，請確認 story.json 檔案格式與語法是否正確。';
     });
 
   function renderScene(sceneId) {
     const scene = storyData[sceneId];
-    if (!scene) return;
+    if (!scene) {
+      console.error(`找不到目標場景 ID: ${sceneId}`);
+      return;
+    }
 
-    // 更新講話者與劇本內文
-    document.getElementById('speaker-name').innerText = scene.speaker ? `【 ${scene.speaker} 】` : '';
-    document.getElementById('text-box').innerText = scene.text;
+    // 相容性處理：如果舊場景只寫了 text，自動轉成單句的 dialogues 陣列
+    if (scene.text && !scene.dialogues) {
+      currentDialogues = [{ speaker: scene.speaker || '', text: scene.text }];
+    } else {
+      currentDialogues = scene.dialogues || [];
+    }
 
-    // 清空並重新渲染選項按鈕
+    dialogueIndex = 0;
+    currentOptions = scene.options || [];
+
+    showNextDialogue();
+  }
+
+  function showNextDialogue() {
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
 
-    scene.options.forEach(opt => {
+    // 如果對話陣列裡面還有未讀取的句子
+    if (dialogueIndex < currentDialogues.length) {
+      const current = currentDialogues[dialogueIndex];
+      
+      // 更新說話者名稱與文字內文
+      document.getElementById('speaker-name').innerText = current.speaker ? `【 ${current.speaker} 】` : '';
+      document.getElementById('text-box').innerText = current.text;
+
+      dialogueIndex++;
+
+      // 建立「點擊繼續」按鈕
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'option-btn';
+      
+      // 如果這句是最後一句對話，且後面有選擇肢，按鈕提示玩家進選擇
+      if (dialogueIndex === currentDialogues.length && currentOptions.length > 0) {
+        nextBtn.innerText = '▼ （點擊進行選擇）';
+      } else {
+        nextBtn.innerText = '▼ 繼續';
+      }
+      
+      nextBtn.onclick = showNextDialogue;
+      optionsContainer.appendChild(nextBtn);
+    } else {
+      // 所有對話閱讀完畢，渲染該場景的分歧選項
+      renderOptions();
+    }
+  }
+
+  function renderOptions() {
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+
+    if (currentOptions.length === 0) {
+      document.getElementById('text-box').innerText += '\n\n【 劇本結束 】';
+      return;
+    }
+
+    currentOptions.forEach(opt => {
       const button = document.createElement('button');
       button.className = 'option-btn';
       button.innerText = opt.text;
