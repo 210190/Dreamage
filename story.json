@@ -3,13 +3,14 @@
     "dialogues": [
       {
         "speaker": "",
-        "text": "房間很暗,你的眼皮愈來愈重。\n你知道只要閉上眼,就會再次墜入那個地方。"
+        "text": "房間很暗，你的眼皮愈來愈重。\n你知道只要閉上眼，就會再次墜入那個地方。"
       }
     ],
     "options": [
       {
         "text": "閉上眼睛",
-        "target": "aisle"
+        "target": "aisle",
+        "stats": { "rationality": 1 }
       }
     ]
   },
@@ -17,17 +18,19 @@
     "dialogues": [
       {
         "speaker": "",
-        "text": "你又回到了這條長廊。牆上的紋路、地上的光影,全都跟剛才一樣——你確定曾經自己來過這裡。"
+        "text": "你又回到了這條長廊。牆上的紋路、地上的光影，全都跟剛才一模一樣——你確定自己曾經來過這裡。\n你隱約記得自己在尋找某個人，但那個人的名字像掉進水裡的墨汁，散成一片模糊。"
       }
     ],
     "options": [
       {
-        "text": "走向左邊，那裡隱約有燈光",
-        "target": "bar"
+        "text": "走向左邊，那裡瀰漫著微醺的燈光",
+        "target": "bar",
+        "stats": { "rationality": 1 }
       },
       {
-        "text": "走向右邊，那裡很安靜",
-        "target": "alley"
+        "text": "走向右邊，那裡很安靜，隱沒在陰影裡",
+        "target": "alley",
+        "stats": { "suspicion": 1 }
       }
     ]
   },
@@ -35,21 +38,187 @@
     "dialogues": [
       {
         "speaker": "酒保",
-        "text": "昏黃色照亮的廣闊空間內，瀰漫著酒和食物的味道。\n你拉了一張空的椅子坐下。\n\n「來點甚麼嗎?」低沉的男聲從前方傳來。"
+        "text": "昏黃色照亮了廣闊的空間，空氣裡混雜着琥珀色酒精與微酸的煙草味。\n你拉開一張笨重的木椅坐下。\n\n「來點什麼嗎？」低沉的男聲擦過桌面傳來，酒保正用乾布擦拭著玻璃杯。"
       }
     ],
     "options": [
       {
-        "text": "來一杯",
-        "target": "bar_order"
+        "text": "「來一杯琥珀色的酒。」",
+        "target": "bar_drink"
       },
       {
-        "text": "不理會",
-        "target": "bar_ignore"
+        "text": "沉默不語，只是看著他",
+        "target": "bar_ignore",
+        "stats": { "suspicion": 1, "contradiction": 1 }
       },
       {
-        "text": "問點事情",
-        "target": "bar_ask"
+        "text": "「我在找一個人，你見過嗎？」",
+        "target": "bar_ask",
+        "stats": { "rationality": 1 }
+      },
+      {
+        "text": "「告訴我...這真的不是現實嗎？」",
+        "is_reality_check": true,
+        "is_ghost_target": false,
+        "reply": [
+          {
+            "speaker": "酒保",
+            "text": "擦杯子的手停了半秒。酒保抬起眼，眉頭微皺，像是在看一個胡言亂語的醉漢。\n\n「客人，你喝多了吧？這裡除了酒，沒別的虛假東西。」\n空氣變得有些尷尬而沉悶。"
+          }
+        ],
+        "stats": { "contradiction": 1 }
+      }
+    ]
+  },
+  "bar_drink": {
+    "dialogues": [
+      {
+        "speaker": "酒保",
+        "text": "玻璃杯在桌上發出沉重的叩擊聲，冰塊在液體中漂浮。\n你抿了一口，液體順著喉嚨灼燒下去，卻沒有任何溫度——這感覺虛幻得可怕。\n\n「一共三金幣。」酒保伸出手。"
+      }
+    ],
+    "options": [
+      {
+        "text": "掏掏口袋...（發現空無一物）",
+        "target": "bar_no_money",
+        "stats": { "contradiction": 1 }
+      },
+      {
+        "text": "把杯子砸碎在桌上：「我沒錢。」",
+        "target": "bar_violent",
+        "stats": { "violence": 2, "suspicion": 1 }
+      }
+    ]
+  },
+  "bar_no_money": {
+    "dialogues": [
+      {
+        "speaker": "酒保",
+        "text": "酒保的眼神瞬間冷了下來，空氣彷彿凝固成冰塊。\n「想喝霸王酒？在這裡，沒錢付的人可走不出這扇門——」\n\n「算在我帳上吧。」\n角落裡傳來一聲低笑。一個包裹在寬大風衣裡的陌生人緩步走來，丟下一枚閃爍的金幣。\n金幣撞擊桌面的聲音清脆得不似真實。"
+      }
+    ],
+    "options": [
+      {
+        "text": "看向解圍的陌生人：「你為什麼要幫我？」",
+        "target": "stranger_talk",
+        "stats": { "rationality": 1 }
+      },
+      {
+        "text": "「這究竟是不是現實？你又是誰？」",
+        "is_reality_check": true,
+        "is_ghost_target": true,
+        "reply": [
+          {
+            "speaker": "神秘人",
+            "text": "風衣男子動作微微一僵，隨即露出一絲詭異而玩味的微笑。\n\n「現實？夢境？對你來說有區別嗎？至少這一刻，這枚金幣是真的。」\n（他似乎並不對這個問題感到困惑，反而眼神深處閃過一抹異樣的光芒。）"
+          }
+        ],
+        "stats": { "suspicion": 2 }
+      }
+    ]
+  },
+  "stranger_talk": {
+    "dialogues": [
+      {
+        "speaker": "神秘人",
+        "text": "「因為你眼神裡的迷茫，跟我認識的一個人很像。」神秘人在你身旁坐下，壓低了帽沿。\n「你在找人對吧？這個地方每個人都在找東西...或者被東西尋找。」"
+      }
+    ],
+    "options": [
+      {
+        "text": "「你知道我在找誰嗎？」",
+        "target": "search_clue",
+        "stats": { "rationality": 1 }
+      }
+    ]
+  },
+  "search_clue": {
+    "dialogues": [
+      {
+        "speaker": "神秘人",
+        "text": "「我不清楚，但我知道長廊盡頭的那間密室，裡面藏著許多遺忘的記憶。」\n神秘人說完便站起身，轉身融入昏暗的影子中。"
+      }
+    ],
+    "options": [
+      {
+        "text": "離開酒吧，前往長廊盡頭",
+        "target": "aisle"
+      }
+    ]
+  },
+  "bar_ignore": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "你維持著死寂般的沉默。酒保見狀冷哼了一聲，轉身去招呼其他客人。\n\n這時，隔壁桌傳來低沉的私語聲——\n「...聽說鬼又出現了，這次它附在一個不屬於這裡的人身上...」\n「噓！你想被它盯上嗎？」"
+      }
+    ],
+    "options": [
+      {
+        "text": "湊過去打聽「鬼」的消息",
+        "target": "bar_ghost_rumor",
+        "stats": { "suspicion": 2 }
+      },
+      {
+        "text": "起身離開這個怪異的地方",
+        "target": "aisle"
+      }
+    ]
+  },
+  "bar_ghost_rumor": {
+    "dialogues": [
+      {
+        "speaker": "酒客",
+        "text": "看見你靠近，酒客神色慌張地閉上嘴，低頭猛喝了一口酒，不再說話。"
+      }
+    ],
+    "options": [
+      {
+        "text": "回到長廊",
+        "target": "aisle"
+      }
+    ]
+  },
+  "bar_ask": {
+    "dialogues": [
+      {
+        "speaker": "酒保",
+        "text": "「找人？」酒保停下手中的活，眼皮都沒抬一下。\n「來這裡的人個個都在找人。有人找仇人，有人找情人。你要找的人長什麼樣子？」"
+      }
+    ],
+    "options": [
+      {
+        "text": "「我不記得長相...只記得對我很重要。」",
+        "target": "bar_ask_memory",
+        "stats": { "contradiction": 1 }
+      }
+    ]
+  },
+  "bar_ask_memory": {
+    "dialogues": [
+      {
+        "speaker": "酒保",
+        "text": "酒保發出一陣沙啞的笑聲。「連長相都不記得？那你去小巷碰碰運氣吧，那裡的瘋子或許知道答案。」"
+      }
+    ],
+    "options": [
+      {
+        "text": "前往小巷",
+        "target": "alley"
+      }
+    ]
+  },
+  "bar_violent": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "玻璃碎片炸裂開來，酒保的神情瞬間變得猙獰，酒吧內的空氣劇烈降溫..."
+      }
+    ],
+    "options": [
+      {
+        "text": "趁亂逃回長廊",
+        "target": "aisle"
       }
     ]
   },
@@ -57,7 +226,7 @@
     "dialogues": [
       {
         "speaker": "",
-        "text": "小巷裡一片死寂，只有遠處傳來滴水聲..."
+        "text": "小巷裡一片死寂，牆角堆著發霉的紙箱，遠處傳來不規律的滴水聲。"
       }
     ],
     "options": [
