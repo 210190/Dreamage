@@ -1,43 +1,78 @@
 {
   "gap": {
-    "text":"房間很暗,你的眼皮愈來愈重。\n你知道只要閉上眼,就會再次墜入那個地方。",
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "房間很暗,你的眼皮愈來愈重。\n你知道只要閉上眼,就會再次墜入那個地方。"
+      }
+    ],
     "options": [
-      {"text":"閉上眼睛", "target":"aisle"}
+      {
+        "text": "閉上眼睛",
+        "target": "aisle"
+      }
     ]
   },
-  
   "aisle": {
-    "text": "你又回到了這條長廊。牆上的紋路、地上的光影,全都跟剛才一樣——你確定曾經自己來過這裡。",
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "你又回到了這條長廊。牆上的紋路、地上的光影,全都跟剛才一樣——你確定曾經自己來過這裡。"
+      }
+    ],
     "options": [
-      { "text": "走向左邊，那裡隱約有燈光", "target": "bar" },
-      { "text": "走向右邊，那裡很安靜", "target": "allay" }
+      {
+        "text": "走向左邊，那裡隱約有燈光",
+        "target": "bar"
+      },
+      {
+        "text": "走向右邊，那裡很安靜",
+        "target": "alley"
+      }
     ]
   },
   "bar": {
-    "diagogues":[
-        {"text":"昏黃色照亮的廣闊空間內，瀰漫著酒和食物的味道。"},
-        {"text":"你拉了一張空的椅子坐下。"},
-        {"speaker":"酒保", "text":"「來點甚麼嗎?」低沉的男聲從前方傳來。"}
-        
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "昏黃色照亮的廣闊空間內，瀰漫著酒和食物的味道。"
+      },
+      {
+        "speaker": "",
+        "text": "你拉了一張空的椅子坐下。"
+      },
+      {
+        "speaker": "酒保",
+        "text": "「來點甚麼嗎?」低沉的男聲從前方傳來。"
+      }
     ],
-    
     "options": [
-      { "text": "坐下來與老旅人交談", "target": "end_rest" },
-      { "text": "轉身離開返回路口", "target": "start" }
+      {
+        "text": "來一杯",
+        "target": "bar_order"
+      },
+      {
+        "text": "不理會",
+        "target": "bar_ignore"
+      },
+      {
+        "text": "問點事情",
+        "target": "bar_ask"
+      }
     ]
   },
-  "end_boat": {
-    "speaker": "系統",
-    "text": "你搭上小船，順流而下，最終抵達了一座繁華的港口小鎮。\n\n【 Ending A：遠航 】",
+  "alley": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "小巷裡一片死寂，只有遠處傳來滴水聲..."
+      }
+    ],
     "options": [
-      { "text": "重新開始遊戲", "target": "start" }
-    ]
-  },
-  "end_rest": {
-    "speaker": "系統",
-    "text": "你與老旅人分享了食物，並在他溫暖的火堆旁渡過了一個安全的夜晚。\n\n【 Ending B：溫暖的邂逅 】",
-    "options": [
-      { "text": "重新開始遊戲", "target": "start" }
+      {
+        "text": "返回長廊",
+        "target": "aisle"
+      }
     ]
   }
 }
