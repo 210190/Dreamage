@@ -88,13 +88,12 @@
   let currentOptions = [];
   let onDialogueComplete = null;
 
-  // 玩家隱藏狀態與數值紀錄
   const gameState = {
-    contradiction: 0, // 矛盾值
-    violence: 0,      // 暴力值
-    rationality: 0,   // 理性值
-    suspicion: 0,     // 多疑值
-    ghost_ask_count: 0 // 質問「是不是現實」累計次數
+    contradiction: 0,
+    violence: 0,
+    rationality: 0,
+    suspicion: 0,
+    ghost_ask_count: 0
   };
 
   fetch('story.json')
@@ -170,14 +169,12 @@
   }
 
   function handleOptionClick(option) {
-    // 紀錄數值變動
     if (option.stats) {
       for (const [key, value] of Object.entries(option.stats)) {
         if (gameState.hasOwnProperty(key)) gameState[key] += value;
       }
     }
 
-    // 處理「質問是不是現實」邏輯
     if (option.is_reality_check) {
       gameState.suspicion += 1;
       if (option.is_ghost_target) {
