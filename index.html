@@ -7,9 +7,9 @@
   <style>
     * { box-sizing: border-box; }
     body {
-      background-color: #0d0d0d;
-      color: #d1d1d1;
-      font-family: 'PingFang TC', 'Microsoft JhengHei', serif;
+      background-color: #0b0c10;
+      color: #c5c6c7;
+      font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Serif CJK TC', serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,65 +19,68 @@
     }
     #game-container {
       width: 100%;
-      max-width: 620px;
-      background: #171717;
-      padding: 28px;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      border: 1px solid #2a2a2a;
+      max-width: 640px;
+      background: #12141d;
+      padding: 32px;
+      border-radius: 4px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+      border: 1px solid #1f2833;
     }
     #speaker-name {
-      font-size: 0.95rem;
-      color: #8b9bb4;
-      font-weight: bold;
-      margin-bottom: 12px;
+      font-size: 0.9rem;
+      color: #66fcf1;
+      font-weight: 600;
+      margin-bottom: 14px;
       min-height: 1.2em;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
     #text-box {
-      font-size: 1.05rem;
-      line-height: 1.9;
-      min-height: 110px;
-      margin-bottom: 24px;
+      font-size: 1.02rem;
+      line-height: 2;
+      min-height: 120px;
+      margin-bottom: 28px;
       white-space: pre-wrap;
-      color: #e0e0e0;
+      color: #edf5e1;
+      letter-spacing: 0.5px;
     }
     .option-btn {
       display: block;
       width: 100%;
-      padding: 14px 18px;
-      margin-top: 12px;
-      background: #222222;
-      color: #c5c5c5;
-      border: 1px solid #333;
-      border-radius: 6px;
+      padding: 14px 20px;
+      margin-top: 10px;
+      background: #1f2833;
+      color: #c5c6c7;
+      border: 1px solid #2c3e50;
+      border-radius: 2px;
       cursor: pointer;
       text-align: left;
-      font-size: 0.98rem;
-      transition: all 0.25s ease;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
     }
     .option-btn:hover {
-      background: #2d3748;
-      color: #ffffff;
-      border-color: #4a5568;
+      background: #45a29e;
+      color: #0b0c10;
+      border-color: #66fcf1;
+      font-weight: 500;
     }
     .reality-btn {
-      border-color: #5a3e3e;
-      color: #d4a5a5;
+      border-color: #5c2c2c;
+      color: #e0a8a8;
     }
     .reality-btn:hover {
-      background: #4a2828;
-      border-color: #8c4a4a;
+      background: #8b0000;
       color: #ffffff;
+      border-color: #ff4d4d;
     }
     .anomaly-btn {
-      border-color: #8c7234;
-      color: #e6c875;
+      border-color: #5c4d2c;
+      color: #e0d1a8;
     }
     .anomaly-btn:hover {
-      background: #54441e;
-      border-color: #d4ac4d;
-      color: #ffffff;
+      background: #b8860b;
+      color: #0b0c10;
+      border-color: #ffd700;
     }
   </style>
 </head>
@@ -85,7 +88,7 @@
 
 <div id="game-container">
   <div id="speaker-name"></div>
-  <div id="text-box">載入夢境中...</div>
+  <div id="text-box">意識同步中...</div>
   <div id="options-container"></div>
 </div>
 
@@ -97,16 +100,20 @@
   let currentOptions = [];
   let onDialogueComplete = null;
 
-  // 遊戲全域狀態旗標
+  const GHOST_INTENTS = ['destroy_brain', 'keep_in_dream', 'make_mad'];
+  const GHOST_PERSONALITIES = ['joker', 'genius', 'resentment'];
+
   const gameState = {
     contradiction: 0,
     violence: 0,
     rationality: 0,
     suspicion: 0,
     ghost_ask_count: 0,
-    bar_visit_count: 0,     // 造訪酒吧次數
-    heard_alley_tip: false, // 是否聽過神秘人對小巷的提醒
-    ghost_encountered: false// 是否已經在小巷觸發過鬼的對話
+    bar_visit_count: 0,
+    heard_alley_tip: false,
+    ghost_encountered: false,
+    ghost_intent: GHOST_INTENTS[Math.floor(Math.random() * GHOST_INTENTS.length)],
+    ghost_personality: GHOST_PERSONALITIES[Math.floor(Math.random() * GHOST_PERSONALITIES.length)]
   };
 
   fetch('story.json')
@@ -117,13 +124,12 @@
       renderScene(startScene);
     })
     .catch(err => {
-      document.getElementById('text-box').innerText = '夢境崩塌，請檢查 story.json 格式。';
+      document.getElementById('text-box').innerText = '架構崩解。請檢查 story.json 格式。';
     });
 
   function renderScene(sceneId) {
     currentSceneId = sceneId;
 
-    // 動態小巷分流邏輯
     if (sceneId === 'alley') {
       if (gameState.ghost_encountered) {
         sceneId = 'alley_empty';
@@ -134,7 +140,6 @@
       }
     }
 
-    // 計算酒吧進入次數
     if (sceneId === 'bar') {
       gameState.bar_visit_count++;
     }
@@ -142,19 +147,20 @@
     const scene = storyData[sceneId];
     if (!scene) return;
 
-    if (scene.text && !scene.dialogues) {
+    if (scene.ghost_dialogues && scene.ghost_dialogues[gameState.ghost_personality]) {
+      currentDialogues = scene.ghost_dialogues[gameState.ghost_personality];
+    } else if (scene.text && !scene.dialogues) {
       currentDialogues = [{ speaker: scene.speaker || '', text: scene.text }];
     } else {
       currentDialogues = scene.dialogues || [];
     }
 
-    // 動態整合選項 (例如二次進酒吧顯示怪事選項)
     currentOptions = [...(scene.options || [])];
     if (sceneId === 'bar' && gameState.bar_visit_count > 1) {
       const anomalyExists = currentOptions.some(opt => opt.target === 'bar_anomaly');
       if (!anomalyExists) {
         currentOptions.unshift({
-          text: "酒吧裡似乎發生了某種怪事...",
+          text: "空間的維度感正在變得扁平...",
           target: "bar_anomaly",
           is_anomaly: true
         });
@@ -179,7 +185,7 @@
       if (dialogueIndex < currentDialogues.length) {
         const nextBtn = document.createElement('button');
         nextBtn.className = 'option-btn';
-        nextBtn.innerText = '▼ 繼續';
+        nextBtn.innerText = '…';
         nextBtn.onclick = showNextDialogue;
         container.appendChild(nextBtn);
       } else {
@@ -195,7 +201,7 @@
     container.innerHTML = '';
 
     if (currentOptions.length === 0) {
-      document.getElementById('text-box').innerText += '\n\n【 夢境暫時終止 】';
+      document.getElementById('text-box').innerText += '\n\n【 意識鏈條中斷 】';
       return;
     }
 
@@ -211,7 +217,6 @@
   }
 
   function handleOptionClick(option) {
-    // 觸發旗標變動
     if (option.set_alley_tip) gameState.heard_alley_tip = true;
     if (option.set_ghost_encountered) gameState.ghost_encountered = true;
 
@@ -228,7 +233,18 @@
       }
     }
 
-    if (option.reply && option.reply.length > 0) {
+    if (option.ghost_replies && option.ghost_replies[gameState.ghost_personality]) {
+      currentDialogues = option.ghost_replies[gameState.ghost_personality];
+      dialogueIndex = 0;
+      onDialogueComplete = () => {
+        if (option.target && option.target !== currentSceneId) {
+          renderScene(option.target);
+        } else {
+          renderOptions();
+        }
+      };
+      showNextDialogue();
+    } else if (option.reply && option.reply.length > 0) {
       currentDialogues = option.reply;
       dialogueIndex = 0;
       onDialogueComplete = () => {
