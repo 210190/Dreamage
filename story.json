@@ -1,0 +1,40 @@
+{
+  "start": {
+    "speaker": "旁白",
+    "text": "你醒來時發現自己身處在一片漆黑的森林中，眼前有兩條小路。\n左邊傳來溪流的水聲，右邊則隱約有火光閃爍。",
+    "options": [
+      { "text": "走向左邊聽見水聲的小路", "target": "stream" },
+      { "text": "走向右邊有火光的小路", "target": "fire" }
+    ]
+  },
+  "stream": {
+    "speaker": "主角",
+    "text": "你沿著水聲走到了溪邊，看見一條小船停靠在岸邊。",
+    "options": [
+      { "text": "搭上小船飄流", "target": "end_boat" },
+      { "text": "返回剛才的分岔路口", "target": "start" }
+    ]
+  },
+  "fire": {
+    "speaker": "老旅人",
+    "text": "「嘿，年輕人！要過來火堆旁坐坐嗎？夜裡森林很冷的。」",
+    "options": [
+      { "text": "坐下來與老旅人交談", "target": "end_rest" },
+      { "text": "轉身離開返回路口", "target": "start" }
+    ]
+  },
+  "end_boat": {
+    "speaker": "系統",
+    "text": "你搭上小船，順流而下，最終抵達了一座繁華的港口小鎮。\n\n【 Ending A：遠航 】",
+    "options": [
+      { "text": "重新開始遊戲", "target": "start" }
+    ]
+  },
+  "end_rest": {
+    "speaker": "系統",
+    "text": "你與老旅人分享了食物，並在他溫暖的火堆旁渡過了一個安全的夜晚。\n\n【 Ending B：溫暖的邂逅 】",
+    "options": [
+      { "text": "重新開始遊戲", "target": "start" }
+    ]
+  }
+}
