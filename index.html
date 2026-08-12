@@ -70,6 +70,15 @@
       border-color: #8c4a4a;
       color: #ffffff;
     }
+    .anomaly-btn {
+      border-color: #8c7234;
+      color: #e6c875;
+    }
+    .anomaly-btn:hover {
+      background: #54441e;
+      border-color: #d4ac4d;
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -88,12 +97,16 @@
   let currentOptions = [];
   let onDialogueComplete = null;
 
+  // 遊戲全域狀態旗標
   const gameState = {
     contradiction: 0,
     violence: 0,
     rationality: 0,
     suspicion: 0,
-    ghost_ask_count: 0
+    ghost_ask_count: 0,
+    bar_visit_count: 0,     // 造訪酒吧次數
+    heard_alley_tip: false, // 是否聽過神秘人對小巷的提醒
+    ghost_encountered: false// 是否已經在小巷觸發過鬼的對話
   };
 
   fetch('story.json')
@@ -109,6 +122,23 @@
 
   function renderScene(sceneId) {
     currentSceneId = sceneId;
+
+    // 動態小巷分流邏輯
+    if (sceneId === 'alley') {
+      if (gameState.ghost_encountered) {
+        sceneId = 'alley_empty';
+      } else if (gameState.heard_alley_tip) {
+        sceneId = 'alley_ghost_aware';
+      } else {
+        sceneId = 'alley_ghost_unaware';
+      }
+    }
+
+    // 計算酒吧進入次數
+    if (sceneId === 'bar') {
+      gameState.bar_visit_count++;
+    }
+
     const scene = storyData[sceneId];
     if (!scene) return;
 
@@ -118,9 +148,20 @@
       currentDialogues = scene.dialogues || [];
     }
 
-    currentOptions = scene.options || [];
+    // 動態整合選項 (例如二次進酒吧顯示怪事選項)
+    currentOptions = [...(scene.options || [])];
+    if (sceneId === 'bar' && gameState.bar_visit_count > 1) {
+      const anomalyExists = currentOptions.some(opt => opt.target === 'bar_anomaly');
+      if (!anomalyExists) {
+        currentOptions.unshift({
+          text: "酒吧裡似乎發生了某種怪事...",
+          target: "bar_anomaly",
+          is_anomaly: true
+        });
+      }
+    }
+
     onDialogueComplete = renderOptions;
-    
     dialogueIndex = 0;
     showNextDialogue();
   }
@@ -162,6 +203,7 @@
       const btn = document.createElement('button');
       btn.className = 'option-btn';
       if (opt.is_reality_check) btn.classList.add('reality-btn');
+      if (opt.is_anomaly) btn.classList.add('anomaly-btn');
       btn.innerText = opt.text;
       btn.onclick = () => handleOptionClick(opt);
       container.appendChild(btn);
@@ -169,6 +211,10 @@
   }
 
   function handleOptionClick(option) {
+    // 觸發旗標變動
+    if (option.set_alley_tip) gameState.heard_alley_tip = true;
+    if (option.set_ghost_encountered) gameState.ghost_encountered = true;
+
     if (option.stats) {
       for (const [key, value] of Object.entries(option.stats)) {
         if (gameState.hasOwnProperty(key)) gameState[key] += value;

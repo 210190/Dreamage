@@ -70,6 +70,20 @@
       }
     ]
   },
+  "bar_anomaly": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "你剛推開酒館的大門，周圍的光影突然像水面波紋般劇烈扭曲。\n酒保的聲音、酒客的談笑聲瞬間遠去，變成了高頻的耳鳴。\n你感到腳下一空，整個人被無形的空間拉扯著，墜入了另一個未知的場景..."
+      }
+    ],
+    "options": [
+      {
+        "text": "睜開眼睛...",
+        "target": "chapter2_start"
+      }
+    ]
+  },
   "bar_drink": {
     "dialogues": [
       {
@@ -121,27 +135,14 @@
     "dialogues": [
       {
         "speaker": "神秘人",
-        "text": "「因為你看起來像個迷路的人。」神秘人壓低帽沿。\n「這條長廊是沒有盡頭的，除非你找到那扇對的門。」"
+        "text": "「因為你看起來像個迷路的人。」神秘人壓低帽沿，聲音帶著一絲戲謔。\n「對了，右邊那條小巷最近總有些不太尋常的動靜...如果你好奇的話，不妨去看看。」"
       }
     ],
     "options": [
       {
         "text": "回到長廊",
-        "target": "aisle"
-      }
-    ]
-  },
-  "bar_ignore": {
-    "dialogues": [
-      {
-        "speaker": "",
-        "text": "你維持著沉默。酒保冷哼了一聲，轉身去忙自己的事。\n\n旁邊的桌位傳來低沉的私語——\n「...它又換了殼...這次誰也不知道它附在誰身上...」"
-      }
-    ],
-    "options": [
-      {
-        "text": "回到長廊",
-        "target": "aisle"
+        "target": "aisle",
+        "set_alley_tip": true
       }
     ]
   },
@@ -149,12 +150,12 @@
     "dialogues": [
       {
         "speaker": "酒保",
-        "text": "「那個人？」酒保擦著杯子，連頭都沒抬。\n「天天都有無數的人進來又離開。你想問的是哪一個？」"
+        "text": "「那個人？」酒保擦著杯子，停頓了幾秒。\n「天天都有無數的人進來又離開。不過講真的...最近總覺得有些人變得跟原本不太一樣，說話和動作怪怪的...但可能是我最近太累想多了吧。」"
       }
     ],
     "options": [
       {
-        "text": "「沒事了。」（回到長廊）",
+        "text": "「可能吧。」（回到長廊）",
         "target": "aisle"
       },
       {
@@ -171,11 +172,25 @@
       }
     ]
   },
+  "bar_ignore": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "你維持著沉默。酒保冷哼了一聲，轉身去忙自己的事。\n吧檯另一側有幾個客人正在低聲閒聊，聽起來只是些無關緊要的酒後雜談。"
+      }
+    ],
+    "options": [
+      {
+        "text": "回到長廊",
+        "target": "aisle"
+      }
+    ]
+  },
   "bar_violent": {
     "dialogues": [
       {
         "speaker": "",
-        "text": "氣氛瞬間降至冰點，酒保的手按在了桌底..."
+        "text": "氣氛瞬間降至冰點，酒保的手 me...按在了桌底..."
       }
     ],
     "options": [
@@ -185,16 +200,78 @@
       }
     ]
   },
-  "alley": {
+  "alley_ghost_unaware": {
+    "dialogues": [
+      {
+        "speaker": "路人",
+        "text": "小巷深處站著一個背對著你的影子。你走近時，他突然轉過身來。\n他的眼神空洞，嘴裡喃喃著一些聽不懂的詞彙，行動僵硬得像傀儡一樣，讓人心底發毛。"
+      }
+    ],
+    "options": [
+      {
+        "text": "感覺怪怪的，先退回長廊",
+        "target": "aisle",
+        "stats": { "suspicion": 1 }
+      }
+    ]
+  },
+  "alley_ghost_aware": {
+    "dialogues": [
+      {
+        "speaker": "怪異的居民",
+        "text": "你記著神秘人的提醒踏入小巷。巷底站著一個神情古怪的人，他看見你，竟露出了預料之中的笑容。\n\n「你終於來了。你在找的那個人...他的殘影已經往深處去了。如果你想找到他，就必須跨過這條邊界。」\n（他刻意拋出這段資訊，語氣帶著一種說不出的引誘意味。）"
+      }
+    ],
+    "options": [
+      {
+        "text": "追著他的影子深入小巷（進入第二章）",
+        "target": "chapter2_start",
+        "set_ghost_encountered": true,
+        "stats": { "rationality": 1 }
+      },
+      {
+        "text": "感覺是陷阱，轉身離開",
+        "target": "aisle",
+        "set_ghost_encountered": true,
+        "stats": { "suspicion": 2 }
+      },
+      {
+        "text": "詢問他這是不是現實",
+        "is_reality_check": true,
+        "is_ghost_target": true,
+        "reply": [
+          {
+            "speaker": "怪異的居民",
+            "text": "居民的臉孔僵硬了一下，眼珠以不自然的角度轉動。\n\n「現實？這裡可比外面的世界更有趣得多呢...」"
+          }
+        ]
+      }
+    ]
+  },
+  "alley_empty": {
     "dialogues": [
       {
         "speaker": "",
-        "text": "小巷裡一片死寂，只有遠處傳來不規律的滴水聲。"
+        "text": "小巷裡一片死寂，剛才那個古怪的人已經不見蹤影，只剩下牆角發霉的紙箱與滴水聲。"
       }
     ],
     "options": [
       {
         "text": "返回長廊",
+        "target": "aisle"
+      }
+    ]
+  },
+  "chapter2_start": {
+    "dialogues": [
+      {
+        "speaker": "",
+        "text": "【 第二章：深層夢境 】\n濃霧撲面而來，周圍的建築開始坍塌、重組..."
+      }
+    ],
+    "options": [
+      {
+        "text": "重新返回第一章長廊",
         "target": "aisle"
       }
     ]
